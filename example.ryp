@@ -1,0 +1,36 @@
+./fib
+  -h,--help<bool> "Shows this list."
+  -v,--verbose<bool> "Output extra debug information while running."
+  file "The file to write fibonacci numbers to."
+	n<int>* "The number to find fibonacci numbers for"
+
+# The above lines can be used at the start of the main file to specify the
+# schema for stdin.
+
+out.template = "{}\n" # Template for out can be changed
+
+# The schema you've created can be represented as a string, which looks like
+# a help doc.
+out(str(in.schema))
+
+if (in.verbose){
+  out("Called by command "+str(in)) # in as a str is the entire command
+	in.map(param: str){
+    out(param)
+  }
+}
+
+# Simple function declaration
+int fib (n: int) {
+  if (n < 2) {
+    return(n)
+  }
+  else {
+    return(fib(n-1)+fib(n-2))
+  }
+}
+
+# Calling the function
+str result = fib(in.n)
+out(result)
+if(in.file) in.file.write(result)

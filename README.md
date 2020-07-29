@@ -18,14 +18,34 @@ padding, and newline spanning.
 > within the standard library.
 
 ```py
-# In schema: list of parameters for stdin, in.file is reserved
-in.schema = [
-  new in_schema<bool>(short='v', long='verbose', desc="Output more information for debugging.", required=false, default=false, value=true)
-]
+./fib
+  -h,--help<bool> "Shows this list."
+  -v,--verbose<bool> "Output extra debug information while running."
+  file "The file to write fibonacci numbers to."
+  n<int>* "The number to find fibonacci numbers for."
+
+# The above lines can be used at the start of the main file to specify the
+# schema for stdin.
+
 out.template = "{}\n" # Template for out can be changed
+
+# The schema you've created can be represented as a string, which looks like
+# a help doc.
+out(str(in.schema))
+"""
+Usage: fib file
+
+Details:
+  Parameter       Type      Description
+  =========       ====      ===========
+  -h,--help                 Shows this list.
+  -v,--verbose    boolean   Output extra debug information while running. Defaults to false.
+  file                      The file to write fibonacci numbers to. Required.
+"""
+
 if (in.verbose){
   out("Called by command "+str(in)) # in as a str is the entire command
-  for(param in in){
+  in.map(param: str){
     out(param)
   }
 }
@@ -35,9 +55,10 @@ if (in.verbose){
 
 > In place of lambdas/anonymous functions, RustyPy implements a
 > prettier callback syntax, this makes it possible to write functions
-> that look like native language features, like `if`, `while` and `for`
+> that look like native language features, like `if`, `while` and `for`.
 
 ```py
+# Defining a custom for function, the callback function is 'callback'.
 null for (iterable: iterable) > callback {
   int i = 0;
   while(i < iterable.length){
@@ -52,10 +73,10 @@ for(i in range(15)){
 
 # Examples
 
-## Fibbonaci numbers
+## Fibonacci numbers
 
 ```py
-int fib(n: int) {
+int fib (n: int) {
   if (n < 2) {
     return(n);
   }
